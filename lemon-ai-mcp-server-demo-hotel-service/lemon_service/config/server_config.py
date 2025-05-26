@@ -1,0 +1,6 @@
+import os
+
+# 数据库连接URL
+SERVER_CONFIG_LOG_LEVEL = os.getenv("SERVER_LOG_LEVEL")
+SERVER_CONFIG_HOST = os.getenv("SERVER_HOST")
+SERVER_CONFIG_PORT = int(os.getenv("SERVER_PORT"))
