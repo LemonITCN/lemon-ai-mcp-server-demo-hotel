@@ -1,29 +1,58 @@
 from fastapi import APIRouter
 from fastapi import Request
-from loguru import logger
 
-from lemon_service.service.image_analysis import ImageAnalysisService
+from lemon_service.decorator.api import api_need_login
+from lemon_service.schema.hotel import HotelRoomSaveReqSchema, HotelRoomUseRecordSaveReqSchema
+from lemon_service.service.hotel import HotelService
 
-image_analysis_router = APIRouter(prefix="/image-analysis", tags=["AI对图片进行分析的API"])
+hotel_router = APIRouter(prefix="/hotel", tags=["酒店API"])
 
-
-@image_analysis_router.post("/extract-image-content", summary="提取图片中物品列表")
-async def extract_image_content(data: ImageAnalysisExtractImageContent, reqeust: Request = None):
-    image_analysis_service = ImageAnalysisService()
-    logger.info("用户分析图片-提取图片内容")
-    return image_analysis_service.extract_image_content(
-        application_id=reqeust.state.application_id,
-        image_base64=data.image_base64,
-        language=data.language
-    )
+hotel_service = HotelService()
 
 
-@image_analysis_router.post("/introduce-image-content", summary="根据图片生成对图片的内容描述")
-async def introduce_image_content(data: ImageAnalysisIntroduceImageContent, reqeust: Request = None):
-    image_analysis_service = ImageAnalysisService()
-    logger.info("用户分析图片-根据图片生成对图片的内容描述")
-    return image_analysis_service.introduce_image_content(
-        application_id=reqeust.state.application_id,
-        image_base64=data.image_base64,
-        language=data.language
-    )
+@api_need_login
+@hotel_router.get("/list_all_hotel", summary="获取所有酒店信息")
+async def list_all_hotel(reqeust: Request = None):
+    return hotel_service.list_all_hotel()
+
+
+@api_need_login
+@hotel_router.get("/list_all_hotel_room_type", summary="获取所有酒店房型信息")
+async def list_all_hotel_room_type(reqeust: Request = None):
+    return hotel_service.list_all_hotel_room_type()
+
+
+@api_need_login
+@hotel_router.put("/save_room", summary="保存房间信息")
+async def save_hotel_room(data: HotelRoomSaveReqSchema, reqeust: Request = None):
+    return hotel_service.save_hotel_room(data)
+
+
+@hotel_router.delete("/delete_room", summary="删除房间信息")
+# @api_need_login
+async def delete_hotel_room(hotel_room_id: str, reqeust: Request = None):
+    return hotel_service.delete_hotel_room(hotel_room_id)
+
+
+@hotel_router.get("/list_hotel_all_room", summary="获取酒店所有房间信息")
+# @api_need_login
+async def list_hotel_all_room(hotel_id: str, reqeust: Request = None):
+    return hotel_service.list_hotel_all_room(hotel_id)
+
+
+@hotel_router.put("/save_room_use_record", summary="保存房间使用记录")
+# @api_need_login
+async def save_hotel_room_use_record(data: HotelRoomUseRecordSaveReqSchema, reqeust: Request = None):
+    return hotel_service.save_hotel_room_use_record(data)
+
+
+@hotel_router.delete("/delete_room_use_record", summary="删除房间使用记录")
+# @api_need_login
+async def delete_hotel_room_use_record(hotel_room_use_record_id: str, reqeust: Request = None):
+    return hotel_service.delete_hotel_room_use_record(hotel_room_use_record_id)
+
+
+@hotel_router.get("/list_hotel_room_all_use_record", summary="获取房间所有使用记录")
+# @api_need_login
+async def list_hotel_room_all_use_record(hotel_room_id: str, reqeust: Request = None):
+    return hotel_service.list_hotel_room_all_use_record(hotel_room_id)

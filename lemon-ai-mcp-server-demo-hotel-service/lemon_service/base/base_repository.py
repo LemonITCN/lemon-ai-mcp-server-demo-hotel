@@ -1,10 +1,9 @@
 from typing import Generic, TypeVar, Type, List, Optional
-from uuid import UUID
 
 from sqlmodel import select
 
-from vrtalk_ai.base.base_model import BaseModel
-from vrtalk_ai.core.db_engine import create_db_session
+from lemon_service.base.base_model import BaseModel
+from lemon_service.core.db_engine import create_db_session
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -20,7 +19,7 @@ class BaseRepository(Generic[T]):
         with create_db_session() as session:
             return session.get(self.model, id)
 
-    def get_all(self) -> List[T]:
+    def list_all(self) -> List[T]:
         """获取所有记录"""
         with create_db_session() as session:
             return session.execute(select(self.model)).scalars().all()

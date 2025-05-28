@@ -1,23 +1,41 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import {createRouter, createWebHashHistory} from 'vue-router'
+import Login from '../views/login.vue'
+import Main from '@/views/main.vue'
+import HotelManage from '@/views/hotel-manage.vue'
+import HotelRoomTypeManage from '@/views/hotel-room-type-manage.vue'
+import HotelRoomManage from '@/views/hotel-room-manage.vue'
+import OrderManage from '@/views/order-manage.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-  ],
+    history: createWebHashHistory(import.meta.env.BASE_URL),
+    routes: [
+        {
+            path: '/login',
+            component: Login
+        },
+        {
+            path: '/',
+            component: Main,
+            children: [
+                {
+                    path: 'hotel',
+                    component: HotelManage
+                },
+                {
+                    path: 'hotel-room-type',
+                    component: HotelRoomTypeManage
+                },
+                {
+                    path: 'hotel-room',
+                    component: HotelRoomManage
+                },
+                {
+                    path: 'order',
+                    component: OrderManage
+                }
+            ]
+        }
+    ]
 })
 
 export default router

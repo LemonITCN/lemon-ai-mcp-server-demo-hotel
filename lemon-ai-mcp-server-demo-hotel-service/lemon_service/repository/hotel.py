@@ -1,5 +1,5 @@
 from lemon_service.base.base_repository import BaseRepository
-from lemon_service.model.hotel import Hotel
+from lemon_service.model import Hotel
 
 
 class HotelRepository(BaseRepository[Hotel]):
