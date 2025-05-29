@@ -1,4 +1,4 @@
 export default class BaseEntityDto {
-    dataKey = ''
-    createAt = 0
+    id = ''
+    createdAt = 0
 }

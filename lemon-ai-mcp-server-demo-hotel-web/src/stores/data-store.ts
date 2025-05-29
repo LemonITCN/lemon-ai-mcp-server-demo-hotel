@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
-import UserDto from '@/model/user-dto'
+import UserDto from '@/model/user-dto.ts'
 
 export const DataStore = defineStore('data-store', () => {
 

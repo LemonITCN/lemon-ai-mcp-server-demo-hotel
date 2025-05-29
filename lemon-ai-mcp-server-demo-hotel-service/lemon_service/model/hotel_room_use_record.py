@@ -16,3 +16,4 @@ class HotelRoomUseRecord(BaseModel, table=True):
     client_name: str = Field(sa_column=Column(String(64), nullable=False, comment="客人姓名"))
     use_start_date: datetime = Field(sa_column=Column(Date, nullable=False, comment="入住开始日期"))
     use_end_date: datetime = Field(sa_column=Column(Date, nullable=False, comment="入住结束日期"))
+    order_id: str = Field(sa_column=Column(String(64), nullable=False, comment="订单ID"))

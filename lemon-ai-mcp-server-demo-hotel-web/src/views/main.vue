@@ -91,6 +91,7 @@ function logout() {
     align-items: stretch;
     border-right: 1px solid #dddddd;
     width: 256px;
+    min-width: 256px;
     position: relative;
     overflow: scroll;
     background: #f0f0f0;

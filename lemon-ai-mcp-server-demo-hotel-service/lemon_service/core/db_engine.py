@@ -1,9 +1,9 @@
 from sqlmodel import SQLModel, create_engine, Session
 
 from lemon_service.config.db_config import DB_CONFIG_URL
-from lemon_service.model import hotel, hotel_room_type, hotel_room, hotel_room_use_record, user, user_session
+from lemon_service.model import hotel, hotel_room_type, hotel_room, hotel_room_use_record, user, user_session, order
 
-_ = (hotel, hotel_room_type, hotel_room, hotel_room_use_record, user, user_session)
+_ = (hotel, hotel_room_type, hotel_room, hotel_room_use_record, user, user_session, order)
 
 
 def create_db_engine():
