@@ -1,14 +1,14 @@
 from lemon_service.base import LemonBaseSchema
 
 
-class HotelRoomSaveReqSchema(LemonBaseSchema):
+class HotelRoomSchema(LemonBaseSchema):
     """
     创建房间
     """
     id: str
     no: str
-    hotel_id: str
-    hotel_room_type_id: str
+    hotelId: str
+    hotelRoomTypeId: str
 
 
 class HotelRoomUseRecordSaveReqSchema(LemonBaseSchema):

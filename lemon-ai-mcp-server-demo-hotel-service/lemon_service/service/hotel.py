@@ -8,7 +8,7 @@ from lemon_service.model.hotel_room_use_record import HotelRoomUseRecord
 from lemon_service.repository import HotelRepository
 from lemon_service.repository import HotelRoomRepository, HotelRoomUseRecordRepository
 from lemon_service.repository import HotelRoomTypeRepository
-from lemon_service.schema.hotel import HotelRoomSaveReqSchema, HotelRoomUseRecordSaveReqSchema
+from lemon_service.schema.hotel import HotelRoomSchema, HotelRoomUseRecordSaveReqSchema
 from lemon_service.schema.hotel import HotelRoomTypeStateSchema
 
 
@@ -32,17 +32,17 @@ class HotelService:
         """
         return self.__hotel_room_type_repository.list_all()
 
-    def save_hotel_room(self, hotel_room_save_req: HotelRoomSaveReqSchema) -> HotelRoom:
+    def save_hotel_room(self, hotel_room_save_req: HotelRoomSchema) -> HotelRoom:
         """
         添加 / 更新酒店房间
         :param hotel_room_save_req: 保存酒店房间请求
         :return: 酒店房间对象
         """
-        hotel_room = self.__hotel_room_repository.get(hotel_room_save_req.hotel_id)
+        hotel_room = self.__hotel_room_repository.get(hotel_room_save_req.id)
         if not hotel_room:
             hotel_room = HotelRoom()
-        hotel_room.hotel_id = hotel_room_save_req.id
-        hotel_room.hotel_room_type_id = hotel_room_save_req.hotel_room_type_id
+        hotel_room.hotel_id = hotel_room_save_req.hotelId
+        hotel_room.hotel_room_type_id = hotel_room_save_req.hotelRoomTypeId
         hotel_room.no = hotel_room_save_req.no
         self.__hotel_room_repository.upsert(hotel_room)
         return hotel_room
@@ -60,7 +60,18 @@ class HotelService:
         :param hotel_id: 酒店id
         :return: 酒店房间列表
         """
-        return self.__hotel_room_repository.list_hotel_all_room(hotel_id)
+        room_model_list = self.__hotel_room_repository.list_hotel_all_room(hotel_id)
+        # 转换成schema list
+        room_schema_list = []
+        for room_model in room_model_list:
+            room_schema = HotelRoomSchema(
+                hotelId=room_model.hotel_id,
+                hotelRoomTypeId=room_model.hotel_room_type_id,
+                no=room_model.no,
+                id=room_model.id,
+            )
+            room_schema_list.append(room_schema)
+        return room_schema_list
 
     def save_hotel_room_use_record(self,
                                    hotel_room_use_record_save_req: HotelRoomUseRecordSaveReqSchema) -> HotelRoomUseRecord:

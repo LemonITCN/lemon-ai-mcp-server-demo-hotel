@@ -5,7 +5,7 @@ import Main from '@/views/admin/main.vue'
 import OrderManage from '@/views/admin/order-manage.vue'
 import ChatView from '@/views/client/chat-view.vue'
 import HomeView from '@/views/client/home-view.vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import Login from '../views/admin/login.vue'
 
 const router = createRouter({
@@ -49,7 +49,7 @@ const router = createRouter({
                     component: ChatView
                 }
             ]
-        },
+        }
     ]
 })
 

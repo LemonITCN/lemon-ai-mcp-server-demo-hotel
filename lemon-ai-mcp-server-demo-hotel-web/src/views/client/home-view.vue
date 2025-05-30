@@ -103,16 +103,14 @@
 </template>
 
 <script setup lang="ts">
-import { Popover } from 'ant-design-vue'
 import ChatView from './chat-view.vue'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
+import {HttpUtils} from '@/utils/http-utils.ts'
 
 const router = useRouter()
 
 const handleAdminClick = () => {
-  const token = localStorage.getItem('token')
-  HttpUtils.addDefaultHeader('LEMON-USER-TOKEN', token)
-  if (token) {
+  if (HttpUtils.defaultHeader['LEMON-USER-TOKEN']) {
     router.push('/admin/hotel')
   } else {
     router.push('/login')
@@ -185,6 +183,7 @@ $gray: #666;
         font-size: 0.9rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
+        cursor: pointer;
 
         svg {
           width: 16px;

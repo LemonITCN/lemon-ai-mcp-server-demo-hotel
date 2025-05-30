@@ -6,13 +6,8 @@
     </a-page-header>
     <a-table :columns="columns" :data-source="data" :pagination="{ pageSize: 20 }">
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'avatar'">
-          <img :src="record.avatarUrl" style="width: 40px;height: 40px;border-radius: 6px"/>
-        </template>
-        <template v-if="column.key === 'vipRechargeTime'">
-          {{
-            record.vipRechargeTime ? dateUtils.format(new Date(record.vipRechargeTime), 'yyyy-MM-dd hh:mm:ss') : '非会员'
-          }}
+        <template v-if="column.key === 'price'">
+          ¥{{ record.price }}
         </template>
       </template>
     </a-table>
@@ -21,45 +16,48 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import type UserDto from '@/model/user-dto.ts'
-import UserService from '@/service/user-service.ts'
+import type HotelRoomTypeDto from '@/model/hotel-room-type-dto'
+import HotelService from '@/service/hotel-service'
 import {message} from 'ant-design-vue'
-import DateUtils from '@/utils/date-utils.ts'
 
-const dateUtils = DateUtils
 const columns = [
   {
-    title: '头像',
-    dataIndex: 'avatar',
-    key: 'avatar'
+    title: '房型名称',
+    dataIndex: 'name',
+    key: 'name'
   },
   {
-    title: '昵称',
-    dataIndex: 'nickname',
-    key: 'nickname'
+    title: '所属酒店',
+    dataIndex: 'hotelName',
+    key: 'hotelName'
   },
   {
-    title: '手机号码',
-    dataIndex: 'phone',
-    key: 'phone'
+    title: '可住人数',
+    dataIndex: 'people_count',
+    key: 'people_count'
   },
   {
-    title: 'VIP充值时间',
-    key: 'vipRechargeTime',
-    dataIndex: 'vipRechargeTime'
+    title: '价格',
+    dataIndex: 'price',
+    key: 'price'
+  },
+  {
+    title: '房型介绍',
+    dataIndex: 'description',
+    key: 'description'
   }
 ]
 
-const data = ref<UserDto[]>([])
+const data = ref<HotelRoomTypeDto[]>([])
 
 onMounted(() => {
-  refreshUserList()
+  refreshRoomTypeList()
 })
 
-function refreshUserList() {
+function refreshRoomTypeList() {
   const hide = message.loading('加载中..', 0)
-  UserService.listAllUser()
-      .then((result: UserDto[]) => {
+  HotelService.listAllHotelRoomType()
+      .then((result: HotelRoomTypeDto[]) => {
         data.value = result
       })
       .catch(e => {
@@ -72,7 +70,7 @@ function refreshUserList() {
 </script>
 
 <style scoped lang="scss">
-.user-list {
+.hotel-list {
   overflow: scroll;
   height: 100%;
 }

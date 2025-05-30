@@ -66,7 +66,7 @@ const $router = useRouter()
 
 watch(selectedKeys, () => {
   if (selectedKeys.value.length > 0) {
-    $router.push({path: '/' + selectedKeys.value[0]})
+    $router.push({path: '/admin/' + selectedKeys.value[0]})
   }
 }, {immediate: true})
 
