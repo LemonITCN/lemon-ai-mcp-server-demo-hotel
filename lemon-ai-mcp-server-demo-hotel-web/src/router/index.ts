@@ -1,40 +1,55 @@
-import {createRouter, createWebHashHistory} from 'vue-router'
-import Login from '../views/login.vue'
-import Main from '@/views/main.vue'
-import HotelManage from '@/views/hotel-manage.vue'
-import HotelRoomTypeManage from '@/views/hotel-room-type-manage.vue'
-import HotelRoomManage from '@/views/hotel-room-manage.vue'
-import OrderManage from '@/views/order-manage.vue'
+import HotelManage from '@/views/admin/hotel-manage.vue'
+import HotelRoomManage from '@/views/admin/hotel-room-manage.vue'
+import HotelRoomTypeManage from '@/views/admin/hotel-room-type-manage.vue'
+import Main from '@/views/admin/main.vue'
+import OrderManage from '@/views/admin/order-manage.vue'
+import ChatView from '@/views/client/chat-view.vue'
+import HomeView from '@/views/client/home-view.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import Login from '../views/admin/login.vue'
 
 const router = createRouter({
-    history: createWebHashHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: '/login',
-            component: Login
-        },
-        {
             path: '/',
-            component: Main,
             children: [
                 {
-                    path: 'hotel',
-                    component: HotelManage
+                    path: '/home',
+                    component: HomeView
                 },
                 {
-                    path: 'hotel-room-type',
-                    component: HotelRoomTypeManage
+                    path: '/login',
+                    component: Login
                 },
                 {
-                    path: 'hotel-room',
-                    component: HotelRoomManage
+                    path: '/admin',
+                    component: Main,
+                    children: [
+                        {
+                            path: 'hotel',
+                            component: HotelManage
+                        },
+                        {
+                            path: 'hotel-room-type',
+                            component: HotelRoomTypeManage
+                        },
+                        {
+                            path: 'hotel-room',
+                            component: HotelRoomManage
+                        },
+                        {
+                            path: 'order',
+                            component: OrderManage
+                        }
+                    ]
                 },
                 {
-                    path: 'order',
-                    component: OrderManage
+                    path: '/chat',
+                    component: ChatView
                 }
             ]
-        }
+        },
     ]
 })
 

@@ -2,7 +2,7 @@
   <div class="view-main">
     <div class="menu-area">
       <div class="user-info">
-        <img src="@/assets/images/logo.png" class="logo"/>
+        <img src="../../assets/images/logo.png" class="logo"/>
         <div class="nickname">{{ userInfo.nickname }}</div>
         <a-popconfirm
             title="您确认要退出登录吗？"
