@@ -8,7 +8,7 @@ from lemon_service.mcp_server import mcp_app
 from lemon_service.middleware.auth import register_auth_middleware
 from lemon_service.middleware.exception import register_exception_handlers
 
-app = FastAPI()
+app = FastAPI(lifespan=mcp_app.lifespan)
 
 app.add_middleware(
     CORSMiddleware,

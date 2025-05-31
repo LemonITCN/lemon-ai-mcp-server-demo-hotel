@@ -16,22 +16,24 @@ class HotelRoomUseRecordSaveReqSchema(LemonBaseSchema):
     添加房间入住/预约记录
     """
     id: str
-    hotel_room_id: str
-    client_name: str
+    hotelRoomId: str
+    clientName: str
     # unix时间戳 精确到毫秒
-    use_start_date: int
-    use_end_date: int
+    useStartDate: int
+    useEndDate: int
 
 
 class HotelRoomTypeStateSchema(LemonBaseSchema):
     """
     房间类型状态
     """
+    # 酒店id
+    hotelId: str
     #  酒店名称
-    hotel_name: str
+    hotelName: str
     # 房间类型id
-    hotel_room_type_id: str
+    hotelRoomTypeId: str
     # 房间类型名称
-    hotel_room_type_name: str
+    hotelRoomTypeName: str
     # 剩余数量
-    balance_count: int
+    balanceCount: int

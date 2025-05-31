@@ -28,7 +28,6 @@
 <script lang="ts" setup>
 import {computed, h, onMounted, ref, watch} from 'vue'
 import {FileDoneOutlined, FileImageOutlined, HomeOutlined, RobotOutlined} from '@ant-design/icons-vue'
-import UserService from '@/service/user-service.ts'
 import {DataStore} from '@/stores/data-store.ts'
 import {useRouter} from 'vue-router'
 import {HttpUtils} from '@/utils/http-utils.ts'
@@ -71,7 +70,6 @@ watch(selectedKeys, () => {
 }, {immediate: true})
 
 onMounted(() => {
-  UserService.getCurrentUserInfo()
 })
 
 function logout() {

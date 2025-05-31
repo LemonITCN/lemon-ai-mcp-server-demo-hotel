@@ -5,5 +5,5 @@ class AiChatSendMessageReq(LemonBaseSchema):
     """
     发送聊天消息请求
     """
-    message = ''
-    conversation_id = ''
+    message: str
+    conversationId: str

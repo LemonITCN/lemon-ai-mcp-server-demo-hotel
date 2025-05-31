@@ -118,4 +118,29 @@ class HotelService:
         :param query_end_date: 查询的结束如期
         :return:
         """
-        pass
+        # 获取酒店对象
+        hotel = self.__hotel_repository.get(hotel_id)
+        # 先列出指定酒店每种房型的房间数量
+        every_type_room_count_pool = self.__hotel_room_type_repository.count_every_hotel_room_type_room_count(hotel_id)
+        # 然后统计指定时间端内指定酒店的所有房间使用记录
+        in_time_range_use_record_list = self.__hotel_room_use_record_repository.list_hotel_time_range_all_use_record(
+            hotel_id=hotel_id, query_start_date=query_start_date, query_end_date=query_end_date
+        )
+        for use_record in in_time_range_use_record_list:
+            # 遍历咩一条 使用记录，然后给房间数量-1
+            every_type_room_count_pool[use_record.hotel_room_type_id] -= 1
+        # 获取所有房型
+        hotel_room_type_list = self.__hotel_room_type_repository.list_all()
+        room_type_state_list = []
+        for hotel_room_type in hotel_room_type_list:
+            if hotel_room_type.id not in every_type_room_count_pool:
+                every_type_room_count_pool[hotel_room_type.id] = 0
+            room_type_state = HotelRoomTypeStateSchema(
+                hotelId=hotel_id,
+                hotelName=hotel.name,
+                hotelRoomTypeId=hotel_room_type.id,
+                hotelRoomTypeName=hotel_room_type.name,
+                balanceCount=every_type_room_count_pool[hotel_room_type.id],
+            )
+            room_type_state_list.append(room_type_state)
+        return room_type_state_list

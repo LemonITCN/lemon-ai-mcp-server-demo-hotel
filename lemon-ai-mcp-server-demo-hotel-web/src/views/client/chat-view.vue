@@ -8,13 +8,13 @@
           <p>在线咨询</p>
         </div>
       </div>
-      
+
       <div class="chat-messages" ref="messagesContainer" @wheel.passive="handleWheel">
-        <div v-for="(message, index) in messages" 
-             :key="index" 
+        <div v-for="(message, index) in messages"
+             :key="index"
              :class="['message', message.type]">
           <div v-if="message.type === 'user'" class="avatar">
-            <img :src="userAvatar" alt="用户头像" class="user-avatar" />
+            <img :src="userAvatar" alt="用户头像" class="user-avatar"/>
           </div>
           <div :class="['message-content', message.type]">
             <div v-if="message.type === 'user'" class="message-text">{{ message.content }}</div>
@@ -24,16 +24,16 @@
       </div>
 
       <div class="chat-input">
-        <textarea 
-          v-model="inputMessage"
-          @keydown.enter.prevent="sendMessage"
-          placeholder="输入消息..."
-          :disabled="isLoading"
+        <textarea
+            v-model="inputMessage"
+            @keydown.enter.prevent="sendMessage"
+            placeholder="输入消息..."
+            :disabled="isLoading"
         ></textarea>
-        <button 
-          @click="sendMessage"
-          :disabled="isLoading || !inputMessage.trim()"
-          class="send-button"
+        <button
+            @click="sendMessage"
+            :disabled="isLoading || !inputMessage.trim()"
+            class="send-button"
         >
           <span v-if="!isLoading">发送</span>
           <span v-else class="loading">发送中...</span>
@@ -44,10 +44,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import {nextTick, onMounted, ref} from 'vue'
 import MarkdownIt from 'markdown-it'
 import userAvatar from '@/assets/user-avatar.svg'
-import aiAvatar from '@/assets/ai-avatar.svg'
+import {fetchEventSource} from '@microsoft/fetch-event-source'
+import {HttpUtils} from '@/utils/http-utils.ts'
 
 const md = new MarkdownIt({
   html: true,
@@ -62,13 +63,14 @@ const renderMarkdown = (content: string) => {
 interface Message {
   type: 'user' | 'ai'
   content: string
-  time: string
 }
 
 const messages = ref<Message[]>([])
 const inputMessage = ref('')
 const isLoading = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
+// 会话id
+const conversationId = ref('')
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -79,7 +81,7 @@ const scrollToBottom = async () => {
 
 const formatTime = () => {
   const now = new Date()
-  return now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  return now.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})
 }
 
 const sendMessage = async () => {
@@ -92,70 +94,54 @@ const sendMessage = async () => {
   }
 
   messages.value.push(userMessage)
-  inputMessage.value = ''
   await scrollToBottom()
 
   // 模拟AI响应
   isLoading.value = true
-  setTimeout(() => {
-    const aiMessage: Message = {
-      type: 'ai',
-      content: `# 欢迎使用AI助手
-
-这是一个**加粗**的文本，这是*斜体*的文本。
-
-## 代码示例
-这里是一个代码块：
-\`\`\`javascript
-const greeting = "Hello World";
-console.log(greeting);
-\`\`\`
-
-## 列表展示
-- 无序列表项1
-- 无序列表项2
-  - 子项1
-  - 子项2
-
-1. 有序列表项1
-2. 有序列表项2
-
-## 引用
-> 这是一段引用文本
-> 这是引用的第二行
-
-## 链接和图片
-[这是一个链接](https://example.com)
-
-## 表格
-| 表头1 | 表头2 |
-|-------|-------|
-| 内容1 | 内容2 |
-| 内容3 | 内容4 |
-
-## 行内代码
-这里有一个 \`const x = 1\` 的行内代码。
-
-希望这个示例能帮助您了解Markdown的各种格式！`,
-      time: ''
+  const controller = new AbortController()
+  fetchEventSource(HttpUtils.getBaeUrl() + '/ai-chat/send-message', {
+    signal: controller.signal,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: inputMessage.value,
+      conversationId: conversationId.value
+    }),
+    onmessage(message) {
+      const messageData = JSON.parse(message.data)
+      console.log('接收到消息', messageData)
+      conversationId.value = messageData.conversation_id
+      if (messageData.type === 'message') {
+        const aiMessage: Message = {
+          type: 'ai',
+          content: messageData.content
+        }
+        messages.value.push(aiMessage)
+        isLoading.value = false
+        scrollToBottom()
+      }
+    },
+    onerror(err) {
+      console.error('连接出错', err)
+      controller.abort()
     }
-    messages.value.push(aiMessage)
-    isLoading.value = false
-    scrollToBottom()
-  }, 1000)
+  })
+  inputMessage.value = ''
 }
 
 const handleWheel = (e: WheelEvent) => {
   const container = messagesContainer.value
   if (!container) return
 
-  const { scrollTop, scrollHeight, clientHeight } = container
-  
+  const {scrollTop, scrollHeight, clientHeight} = container
+
   // 如果已经滚动到底部，且继续向下滚动，则阻止默认行为
   if (scrollTop + clientHeight >= scrollHeight && e.deltaY > 0) {
     e.preventDefault()
   }
-  
+
   // 如果已经滚动到顶部，且继续向上滚动，则阻止默认行为
   if (scrollTop <= 0 && e.deltaY < 0) {
     e.preventDefault()
@@ -166,16 +152,9 @@ onMounted(() => {
   // 添加欢迎消息
   messages.value.push({
     type: 'ai',
-    content: `# 你好！我是AI助手 👋
+    content: `### 你好呀，欢迎咨询VT酒店
 
-有什么我可以帮你的吗？我可以：
-- 回答问题
-- 提供建议
-- 编写代码
-- 分析数据
-
-> 请随时向我提问，我会尽力帮助你！`,
-    time: ''
+请问您想住什么房间？`
   })
 })
 </script>
@@ -235,10 +214,12 @@ $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .header-text {
       flex: 1;
+
       h2 {
         margin: 0;
         font-size: 0.9rem;
       }
+
       p {
         margin: 0;
         font-size: 0.75rem;
@@ -384,13 +365,13 @@ $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-collapse: collapse;
             width: 100%;
             margin: 0.8rem 0;
-            
+
             th, td {
               border: 1px solid #e9ecef;
               padding: 0.5rem;
               text-align: left;
             }
-            
+
             th {
               background-color: #f8f9fa;
             }

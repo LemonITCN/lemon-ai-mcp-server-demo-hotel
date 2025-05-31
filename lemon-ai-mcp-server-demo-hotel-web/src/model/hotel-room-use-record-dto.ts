@@ -1,6 +1,6 @@
 import BaseEntityDto from '@/model/base-entity-dto'
 
-export default class HotelRoomUseRecord extends BaseEntityDto {
+export default class HotelRoomUseRecordDto extends BaseEntityDto {
     // 酒店ID
     hotel_id = ''
     // 酒店房间ID
